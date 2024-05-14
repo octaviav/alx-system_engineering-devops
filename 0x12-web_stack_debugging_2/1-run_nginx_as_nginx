@@ -1,0 +1,22 @@
+#!/bin/bash
+#configuration of nginx to run as the nginx user
+
+#stops nginx from running
+sudo service nginx stop
+
+# sets user to run nginx as master process
+sed -i "s/user www-data/user nginx/" /etc/nginx/nginx.conf
+
+# configures /etc/nginx/sites-enabled/default to bind nginx to port
+sudo sed -i 's/80/8080/' /etc/nginx/sites-enabled/default
+
+# gives /etc/nginx/nginx-conf permissions
+chmod u+x /etc/nginx/nginx.conf
+
+#checks for services running on port 8080
+for pid in $(pidof apache2); do
+    kill "$pid"
+done
+
+#restarts nginx
+sudo -u nginx service nginx start
